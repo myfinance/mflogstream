@@ -1,4 +1,4 @@
-server.port: 30030
+server.port: 30036
 env:
   host: 192.168.100.73
 logging:

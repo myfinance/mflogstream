@@ -17,6 +17,7 @@
 	<properties>
 		<!--<MFFrameWork.Version>0.0.0-0-SNAPSHOT</MFFrameWork.Version>-->
 		<MFFrameWork.Version>0.23.0-alpha.39fe965caebd070211fae333126704f42aefda2e</MFFrameWork.Version>
+		<jib.container-name>holgerfischer/myfinance-mflogstream:</jib.container-name>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -39,6 +40,28 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>${jib-maven-plugin.version}</version>
+				<configuration>
+					<from>
+						<image>${jib.baseimage}</image>
+					</from>
+					<to>
+						<image>${jib.container-repo}${jib.container-name}${project.version}</image>
+					</to>
+					<container>
+						<mainClass>de.hf.myfinance.logstream.LogstreamApplication</mainClass>
+					</container>
+					<allowInsecureRegistries>true</allowInsecureRegistries>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 
 </project>
