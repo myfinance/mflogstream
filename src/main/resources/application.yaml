@@ -1,0 +1,30 @@
+server.port: 30030
+env:
+  host: 192.168.100.73
+logging:
+  level:
+    root: INFO
+    de.hf.myfinance: DEBUG
+
+spring:
+  cloud:
+    function:
+      definition: mflogProcessor
+
+spring.cloud.stream:
+  defaultBinder: rabbit
+  default.contentType: application/json
+  bindings.mflogProcessor-in-0:
+    destination: logStream
+    group: logPublisherGroup
+
+spring.cloud.stream.rabbit.bindings:
+  mflogProcessor-in-0:
+    autoBindDlq: true
+    republishToDlq: true
+
+spring.rabbitmq:
+  host: ${env.host}
+  port: 30021
+  username: user
+  password: vulkan
