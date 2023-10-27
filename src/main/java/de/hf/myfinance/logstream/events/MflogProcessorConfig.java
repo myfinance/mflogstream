@@ -1,7 +1,7 @@
 package de.hf.myfinance.logstream.events;
 
 import de.hf.myfinance.event.Event;
-import de.hf.myfinance.logstream.LogStreamService;
+import de.hf.myfinance.logstream.LogStreamWebSocketHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +15,11 @@ import java.util.function.Consumer;
 public class MflogProcessorConfig {
     private static final Logger LOG = LoggerFactory.getLogger(MflogProcessorConfig.class);
 
-    private LogStreamService logStreamService;
+    private LogStreamWebSocketHandler logStreamWebSocketHandler;
 
     @Autowired
-    public MflogProcessorConfig(LogStreamService logStreamService) {
-        this.logStreamService = logStreamService;
+    public MflogProcessorConfig(LogStreamWebSocketHandler logStreamWebSocketHandler) {
+        this.logStreamWebSocketHandler = logStreamWebSocketHandler;
     }
 
     @Bean
@@ -32,7 +32,7 @@ public class MflogProcessorConfig {
                 case CREATE:
                     LOG.info("msg with ID: {}", event.getKey());
                     LOG.info("msg: {}", event.getData());
-                    this.logStreamService.addData(event.getData());
+                    this.logStreamWebSocketHandler.broadcastMessage(event.getKey() + ":" + event.getData());
                     break;
 
                 default:
