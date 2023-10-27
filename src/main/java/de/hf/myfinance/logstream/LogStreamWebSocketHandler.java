@@ -14,7 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class LogStreamWebSocketHandler implements WebSocketHandler {
 
-    private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
+    private final Map<String, SessionWrapper> sessions = new ConcurrentHashMap<>();
+    private final int sessionTimeout = 180; //Timeout in minutes
 
 
     public LogStreamWebSocketHandler() {
@@ -23,8 +24,9 @@ public class LogStreamWebSocketHandler implements WebSocketHandler {
 
     @Override
     public Mono<Void> handle(WebSocketSession session) {
+        sessionCleanup();
         String sessionId = session.getId();
-        sessions.put(sessionId, session);
+        sessions.put(sessionId, new SessionWrapper(session, LocalDateTime.now()));
         var receive = session
                 .receive()
                 .map(WebSocketMessage::getPayloadAsText)
@@ -38,10 +40,20 @@ public class LogStreamWebSocketHandler implements WebSocketHandler {
     }
 
     public void broadcastMessage(String message) {
-        for (WebSocketSession session : sessions.values()) {
-            session.send(Mono.just(session.textMessage(message)))
+        sessionCleanup();
+        for (SessionWrapper session : sessions.values()) {
+            session.session().send(Mono.just(session.session().textMessage(message)))
                     .onErrorResume(e -> Mono.empty())
                     .subscribe();
+        }
+    }
+
+    private void sessionCleanup() {
+        LocalDateTime ts = LocalDateTime.now().minusMinutes(sessionTimeout);
+        for (SessionWrapper session : sessions.values()) {
+            if(session.startTime().isBefore(ts)) {
+                sessions.remove(session.session().getId());
+            }
         }
     }
 }
