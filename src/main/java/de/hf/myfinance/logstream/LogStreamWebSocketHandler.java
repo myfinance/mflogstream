@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import de.hf.framework.audit.AuditType;
 
 @Component
 public class LogStreamWebSocketHandler implements WebSocketHandler {
@@ -36,7 +37,7 @@ public class LogStreamWebSocketHandler implements WebSocketHandler {
     }
 
     private Flux<String> createResponse(String msg) {
-        return Flux.just(LocalDateTime.now() + ": Logstream successfuly connected for user:" + msg);
+        return Flux.just(AuditType.USERINFO + ":" + LocalDateTime.now() + ": Logstream successfuly connected for user:" + msg);
     }
 
     public void broadcastMessage(String message) {
