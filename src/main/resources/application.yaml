@@ -18,10 +18,7 @@ spring.cloud.stream:
     destination: logStream
     group: logPublisherGroup
 
-spring.cloud.stream.rabbit.bindings:
-  mflogProcessor-in-0:
-    autoBindDlq: true
-    republishToDlq: true
+
 
 spring.rabbitmq:
   host: ${env.host}
